@@ -1,0 +1,1960 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JAC MediaLand — Quotation Manager v3</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.8.0/tabler-icons.min.css">
+<style>
+:root {
+  --gold: #b8860b;
+  --gold-light: #d4a017;
+  --gold-dim: #b8860b22;
+  --gold-border: #b8860b44;
+  --bg: #0f0e0c;
+  --bg2: #181612;
+  --bg3: #211e18;
+  --bg4: #2a261e;
+  --border: #2e2a21;
+  --border2: #3a3528;
+  --text: #f5f0e8;
+  --text2: #a09880;
+  --text3: #6b6352;
+  --danger: #c0392b;
+  --danger-bg: #2a1212;
+  --success: #27ae60;
+  --success-bg: #0f2a1a;
+  --info: #2980b9;
+  --info-bg: #0f1e2a;
+  --warning-bg: #2a2010;
+  --radius: 8px;
+  --radius-lg: 12px;
+  --shadow: 0 4px 24px rgba(0,0,0,.5);
+  --font: 'DM Sans', sans-serif;
+  --font-display: 'Playfair Display', serif;
+  --font-mono: 'DM Mono', monospace;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--bg2); }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+
+/* ── TOPBAR ── */
+.topbar {
+  position: sticky; top: 0; z-index: 200;
+  background: var(--bg2);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 28px; height: 56px;
+}
+
+.brand {
+  display: flex; align-items: center; gap: 12px;
+  text-decoration: none; color: inherit;
+}
+.brand-logo {
+  width: 34px; height: 34px; border-radius: 8px;
+  background: linear-gradient(135deg, var(--gold) 0%, #7a5800 100%);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-display); font-size: 13px; font-weight: 700;
+  color: #fff; letter-spacing: 1px;
+  box-shadow: 0 2px 8px rgba(184,134,11,.3);
+  flex-shrink: 0;
+}
+.brand-name {
+  font-family: var(--font-display); font-size: 16px; font-weight: 700;
+  color: var(--text); letter-spacing: .3px;
+}
+.brand-sub { font-size: 11px; color: var(--text3); margin-top: -2px; letter-spacing: .5px; }
+
+.nav { display: flex; gap: 2px; }
+.nav-btn {
+  padding: 6px 14px; border-radius: 6px;
+  border: none; background: none;
+  color: var(--text2); font-size: 13px; font-family: var(--font);
+  cursor: pointer; display: flex; align-items: center; gap: 6px;
+  transition: all .15s;
+}
+.nav-btn:hover { background: var(--bg3); color: var(--text); }
+.nav-btn.active { background: var(--bg4); color: var(--text); font-weight: 500; }
+.nav-btn i { font-size: 16px; }
+
+.topbar-right { display: flex; gap: 8px; align-items: center; }
+
+/* ── BUTTONS ── */
+.btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 8px 16px; border-radius: var(--radius);
+  border: 1px solid var(--border2);
+  background: var(--bg3); color: var(--text);
+  font-size: 13px; font-family: var(--font); font-weight: 400;
+  cursor: pointer; transition: all .15s; white-space: nowrap;
+}
+.btn:hover { background: var(--bg4); border-color: var(--border2); }
+.btn.primary {
+  background: var(--gold); color: #0f0e0c;
+  border-color: var(--gold); font-weight: 600;
+}
+.btn.primary:hover { background: var(--gold-light); border-color: var(--gold-light); }
+.btn.danger { color: var(--danger); border-color: var(--danger); }
+.btn.danger:hover { background: var(--danger-bg); }
+.btn.sm { padding: 5px 11px; font-size: 12px; }
+.btn.ghost { background: none; border-color: transparent; color: var(--text2); }
+.btn.ghost:hover { background: var(--bg3); color: var(--text); }
+.btn i { font-size: 15px; }
+
+.icon-btn {
+  width: 30px; height: 30px; border-radius: 6px;
+  border: none; background: none;
+  color: var(--text3); cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 15px; transition: all .15s;
+}
+.icon-btn:hover { background: var(--bg3); color: var(--text); }
+.icon-btn.red:hover { background: var(--danger-bg); color: var(--danger); }
+.icon-btn.green:hover { background: var(--success-bg); color: var(--success); }
+
+/* ── LAYOUT ── */
+.content { padding: 28px; max-width: 1400px; margin: 0 auto; }
+.page { display: none; }
+.page.active { display: block; animation: fadeIn .2s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ── CARDS ── */
+.card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+.card-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  flex-wrap: wrap;
+}
+.card-title { font-size: 14px; font-weight: 500; }
+
+/* ── STATS ── */
+.stats-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px;
+  margin-bottom: 24px;
+}
+.stat {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); padding: 18px 20px;
+  position: relative; overflow: hidden; transition: border-color .2s;
+}
+.stat:hover { border-color: var(--gold-border); }
+.stat::before {
+  content: ''; position: absolute; top: 0; left: 0;
+  width: 3px; height: 100%; background: var(--gold); opacity: 0;
+  transition: opacity .2s;
+}
+.stat:hover::before { opacity: 1; }
+.stat-label { font-size: 11px; color: var(--text3); letter-spacing: .8px; text-transform: uppercase; margin-bottom: 8px; }
+.stat-val { font-size: 26px; font-weight: 600; font-family: var(--font-display); color: var(--text); line-height: 1; }
+.stat-val.gold { color: var(--gold); }
+.stat-sub { font-size: 11px; color: var(--text3); margin-top: 6px; }
+
+/* ── TABLE ── */
+.tbl-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th {
+  padding: 11px 16px; text-align: left;
+  color: var(--text3); font-weight: 400; font-size: 11px;
+  border-bottom: 1px solid var(--border);
+  text-transform: uppercase; letter-spacing: .6px; white-space: nowrap;
+}
+td { padding: 13px 16px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+tr:last-child td { border-bottom: none; }
+tbody tr { transition: background .1s; }
+tbody tr:hover td { background: var(--bg3); }
+.tbl-id { font-family: var(--font-mono); font-size: 11px; color: var(--text3); }
+.tbl-client { font-weight: 500; }
+.tbl-amount { text-align: right; font-family: var(--font-mono); font-weight: 500; }
+.tbl-actions { display: flex; gap: 4px; justify-content: flex-end; }
+
+.empty {
+  padding: 60px 20px; text-align: center;
+  color: var(--text3); font-size: 13px;
+}
+.empty i { font-size: 32px; display: block; margin-bottom: 10px; color: var(--border2); }
+
+/* ── BADGES ── */
+.badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 3px 10px; border-radius: 99px;
+  font-size: 11px; font-weight: 500; letter-spacing: .3px;
+}
+.badge::before {
+  content: ''; width: 5px; height: 5px;
+  border-radius: 50%; background: currentColor; opacity: .7;
+}
+.badge.draft { background: var(--bg4); color: var(--text3); }
+.badge.sent { background: var(--warning-bg); color: #d4a017; }
+.badge.accepted { background: var(--success-bg); color: #2ecc71; }
+.badge.rejected { background: var(--danger-bg); color: #e74c3c; }
+.badge.expired { background: var(--bg3); color: var(--text3); }
+
+/* ── SEARCH ROW ── */
+.search-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.search-input {
+  padding: 7px 12px; border-radius: var(--radius);
+  border: 1px solid var(--border2);
+  background: var(--bg3); color: var(--text);
+  font-size: 13px; font-family: var(--font);
+  width: 220px;
+  transition: border-color .15s;
+}
+.search-input:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 3px var(--gold-dim); }
+select.search-input { width: auto; cursor: pointer; }
+
+/* ── EDITOR ── */
+.editor-layout { display: grid; grid-template-columns: 1fr 320px; gap: 18px; align-items: start; }
+.editor-main { display: flex; flex-direction: column; gap: 14px; }
+.section {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); padding: 20px;
+}
+.section-title {
+  font-size: 12px; font-weight: 500; color: var(--text3);
+  text-transform: uppercase; letter-spacing: 1px;
+  margin-bottom: 16px; display: flex; align-items: center; gap: 8px;
+}
+.section-title i { font-size: 15px; color: var(--gold); }
+
+/* ── FORM ELEMENTS ── */
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.form-grid.three { grid-template-columns: 1fr 1fr 1fr; }
+.form-grid.four { grid-template-columns: 1fr 1fr 1fr 1fr; }
+.form-group { display: flex; flex-direction: column; gap: 5px; }
+.form-group.full { grid-column: 1/-1; }
+label { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: .6px; }
+input, select, textarea {
+  padding: 8px 11px; border-radius: var(--radius);
+  border: 1px solid var(--border2);
+  background: var(--bg3); color: var(--text);
+  font-size: 13px; font-family: var(--font);
+  width: 100%; transition: border-color .15s, box-shadow .15s;
+}
+input:focus, select:focus, textarea:focus {
+  outline: none; border-color: var(--gold);
+  box-shadow: 0 0 0 3px var(--gold-dim);
+}
+select { cursor: pointer; }
+textarea { resize: vertical; min-height: 72px; }
+input[type="number"] { -moz-appearance: textfield; }
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
+
+/* ── ITEMS TABLE ── */
+.items-table-wrap { overflow-x: auto; margin: -4px; padding: 4px; }
+.items-table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 600px; }
+.items-table th {
+  padding: 8px 10px; text-align: left; color: var(--text3);
+  font-weight: 400; font-size: 11px; letter-spacing: .5px; text-transform: uppercase;
+  border-bottom: 1px solid var(--border);
+}
+.items-table td { padding: 5px 6px; border-bottom: 1px solid var(--border); }
+.items-table td input { padding: 7px 9px; font-size: 12px; }
+.items-table tr:last-child td { border-bottom: none; }
+.row-amount {
+  font-family: var(--font-mono); font-weight: 500;
+  text-align: right; padding-right: 10px !important; font-size: 12px;
+  color: var(--gold); white-space: nowrap;
+}
+.add-row-btn {
+  width: 100%; margin-top: 10px;
+  padding: 9px; border-radius: var(--radius);
+  border: 1px dashed var(--gold-border); background: none;
+  color: var(--gold); font-size: 12px; font-family: var(--font);
+  cursor: pointer; transition: all .15s;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+}
+.add-row-btn:hover { background: var(--gold-dim); border-color: var(--gold); }
+
+/* ── SIDEBAR ── */
+.sidebar { display: flex; flex-direction: column; gap: 14px; position: sticky; top: 72px; }
+.preview-card {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); padding: 16px;
+}
+.preview-card-title {
+  font-size: 11px; color: var(--text3); text-transform: uppercase;
+  letter-spacing: .8px; margin-bottom: 12px; font-weight: 500;
+}
+.summary-row {
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 13px; padding: 6px 0; border-bottom: 1px solid var(--border);
+}
+.summary-row:last-child { border-bottom: none; font-weight: 600; }
+.summary-row .label { color: var(--text2); }
+.summary-total { color: var(--gold); font-family: var(--font-mono); }
+.pay-pill {
+  display: flex; justify-content: space-between; align-items: center;
+  background: var(--bg3); border-radius: var(--radius);
+  padding: 8px 12px; font-size: 12px; margin-bottom: 6px;
+}
+.pay-pill:last-child { margin-bottom: 0; border: 1px solid var(--gold-border); background: var(--bg); }
+.pay-pill .amount { font-family: var(--font-mono); font-weight: 500; color: var(--gold); }
+.editor-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; flex-wrap: wrap; gap: 12px; }
+.editor-heading { font-family: var(--font-display); font-size: 18px; font-weight: 700; }
+.editor-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+/* ── PREVIEW ── */
+.preview-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; flex-wrap: wrap; gap: 12px; }
+.preview-frame {
+  background: #fff; border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  padding: 56px 64px;
+  font-family: 'Segoe UI', Georgia, Arial, sans-serif;
+  color: #1a1a1a; font-size: 13px; line-height: 1.65;
+  box-shadow: var(--shadow);
+}
+@media (max-width: 700px) {
+  .preview-frame { padding: 24px 20px; }
+}
+
+/* ── TIMELINE ── */
+.tl-wrap { padding: 4px 0; }
+.tl-item { display: flex; gap: 12px; padding: 10px 20px; border-bottom: 1px solid var(--border); }
+.tl-item:last-child { border-bottom: none; }
+.tl-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--gold); margin-top: 5px; flex-shrink: 0; }
+.tl-info { flex: 1; }
+.tl-title { font-weight: 500; font-size: 13px; }
+.tl-meta { font-size: 11px; color: var(--text3); margin-top: 2px; }
+.tl-badge { margin-left: auto; }
+
+/* ── MODAL ── */
+.modal-backdrop {
+  position: fixed; inset: 0; z-index: 999;
+  background: rgba(0,0,0,.7); backdrop-filter: blur(4px);
+  display: none; align-items: center; justify-content: center;
+  padding: 20px;
+}
+.modal-backdrop.open { display: flex; }
+.modal {
+  background: var(--bg2); border: 1px solid var(--border2);
+  border-radius: var(--radius-lg); padding: 28px;
+  width: min(460px, 100%);
+  box-shadow: 0 24px 64px rgba(0,0,0,.6);
+  animation: modalIn .2s ease;
+}
+@keyframes modalIn {
+  from { opacity: 0; transform: scale(.96) translateY(8px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+.modal h3 { font-family: var(--font-display); font-size: 18px; margin-bottom: 10px; }
+.modal p { font-size: 13px; color: var(--text2); line-height: 1.6; }
+.modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 22px; }
+
+/* ── TOAST ── */
+.toast-container {
+  position: fixed; bottom: 24px; right: 24px; z-index: 9999;
+  display: flex; flex-direction: column; gap: 8px;
+}
+.toast {
+  background: var(--bg2); border: 1px solid var(--border2);
+  border-radius: var(--radius); padding: 12px 16px;
+  font-size: 13px; display: flex; align-items: center; gap: 10px;
+  box-shadow: 0 8px 32px rgba(0,0,0,.4);
+  animation: toastIn .25s ease;
+  max-width: 320px;
+}
+.toast.success { border-left: 3px solid var(--success); }
+.toast.error { border-left: 3px solid var(--danger); }
+.toast.info { border-left: 3px solid var(--gold); }
+@keyframes toastIn {
+  from { opacity: 0; transform: translateX(16px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+@keyframes toastOut {
+  from { opacity: 1; transform: translateX(0); }
+  to { opacity: 0; transform: translateX(16px); }
+}
+
+/* ── PRINT ── */
+@media print {
+  .topbar, .nav, .topbar-right, .editor-actions, .sidebar,
+  .editor-top .btn, .preview-top, .no-print { display: none !important; }
+  .content { padding: 0; }
+  body { background: #fff; }
+  .preview-frame { box-shadow: none; border: none; padding: 0; }
+  .page { display: block !important; }
+  #page-dashboard, #page-list, #page-editor { display: none !important; }
+  #page-preview { display: block !important; }
+}
+
+/* ── IMPORT MODAL ── */
+.drop-zone {
+  border: 2px dashed var(--gold-border); border-radius: var(--radius-lg);
+  padding: 40px 20px; text-align: center; cursor: pointer;
+  transition: all .2s; color: var(--text3); font-size: 13px;
+  margin: 16px 0;
+}
+.drop-zone:hover, .drop-zone.dragover { border-color: var(--gold); background: var(--gold-dim); color: var(--text); }
+.drop-zone i { font-size: 32px; display: block; margin-bottom: 8px; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 900px) {
+  .editor-layout { grid-template-columns: 1fr; }
+  .sidebar { position: static; }
+  .stats-grid { grid-template-columns: repeat(2, 1fr); }
+  .form-grid.three { grid-template-columns: 1fr 1fr; }
+  .form-grid.four { grid-template-columns: 1fr 1fr; }
+  .content { padding: 16px; }
+  .topbar { padding: 0 16px; }
+}
+@media (max-width: 600px) {
+  .stats-grid { grid-template-columns: 1fr 1fr; }
+  .form-grid { grid-template-columns: 1fr; }
+  .topbar { flex-wrap: wrap; height: auto; padding: 10px 16px; gap: 8px; }
+  .nav-btn span { display: none; }
+}
+
+/* ── DIVIDER ── */
+.gold-divider {
+  height: 1px; background: linear-gradient(to right, transparent, var(--gold), transparent);
+  opacity: .3; margin: 20px 0;
+}
+
+/* ── ACTIVITY INDICATOR ── */
+.activity-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  display: inline-block; margin-right: 6px;
+}
+.dot-draft { background: var(--text3); }
+.dot-sent { background: var(--gold); }
+.dot-accepted { background: var(--success); }
+.dot-rejected { background: var(--danger); }
+.dot-expired { background: var(--text3); }
+
+/* ── SYNC BADGE ── */
+.sync-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 4px 10px; border-radius: 99px;
+  font-size: 11px; font-weight: 500; letter-spacing: .3px;
+  border: 1px solid var(--border2);
+  background: var(--bg3); color: var(--text3);
+  cursor: default; transition: all .2s;
+}
+.sync-badge.synced   { border-color: var(--success); color: var(--success); background: var(--success-bg); }
+.sync-badge.syncing  { border-color: var(--gold-border); color: var(--gold); background: var(--warning-bg); }
+.sync-badge.error    { border-color: var(--danger); color: var(--danger); background: var(--danger-bg); }
+.sync-badge.offline  { border-color: var(--border2); color: var(--text3); }
+.sync-dot {
+  width: 6px; height: 6px; border-radius: 50%; background: currentColor;
+}
+.sync-dot.pulse {
+  animation: pulse 1s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: .4; transform: scale(.7); }
+}
+
+/* ── SETTINGS MODAL ── */
+.settings-grid { display: grid; grid-template-columns: 1fr; gap: 12px; margin-top: 16px; }
+.settings-row { display: flex; flex-direction: column; gap: 5px; }
+.settings-row label { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: .6px; }
+.settings-row input { padding: 8px 11px; border-radius: var(--radius); border: 1px solid var(--border2); background: var(--bg3); color: var(--text); font-size: 13px; font-family: var(--font); }
+.settings-row input:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 3px var(--gold-dim); }
+.settings-hint { font-size: 11px; color: var(--text3); margin-top: 4px; line-height: 1.5; }
+
+/* ── QUICK STATUS STRIP ── */
+.status-strip {
+  display: flex; gap: 2px; margin: 14px 20px 0; padding-bottom: 14px;
+  border-bottom: 1px solid var(--border);
+}
+.status-pill {
+  flex: 1; text-align: center; padding: 6px 4px;
+  border-radius: 6px; font-size: 11px; cursor: pointer;
+  transition: background .15s; color: var(--text3);
+}
+.status-pill:hover { background: var(--bg3); }
+.status-pill .count { font-weight: 600; display: block; font-size: 16px; }
+</style>
+</head>
+<body>
+
+<div id="toast-container" class="toast-container"></div>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="brand">
+    <div class="brand-logo">JM</div>
+    <div>
+      <div class="brand-name">JAC MediaLand</div>
+      <div class="brand-sub">Quotation Manager</div>
+    </div>
+  </div>
+  <div class="nav">
+    <button class="nav-btn active" id="nav-dashboard" onclick="showPage('dashboard')">
+      <i class="ti ti-layout-dashboard"></i> <span>Dashboard</span>
+    </button>
+    <button class="nav-btn" id="nav-list" onclick="showPage('list')">
+      <i class="ti ti-file-text"></i> <span>Quotations</span>
+    </button>
+    <button class="nav-btn" id="nav-new" onclick="openNewEditor()">
+      <i class="ti ti-plus"></i> <span>New</span>
+    </button>
+  </div>
+  <div class="topbar-right">
+    <!-- SYNC STATUS BADGE -->
+    <div class="sync-badge offline" id="sync-badge" title="Cloud sync status" onclick="openModal('settings-modal')" style="cursor:pointer">
+      <span class="sync-dot" id="sync-dot"></span>
+      <span id="sync-label">Local only</span>
+    </div>
+    <button class="btn sm ghost" onclick="openModal('settings-modal')" title="API Settings">
+      <i class="ti ti-settings"></i>
+    </button>
+    <button class="btn sm ghost" onclick="openImportModal()" title="Import JSON backup">
+      <i class="ti ti-upload"></i> Import
+    </button>
+    <button class="btn sm" onclick="exportAll()">
+      <i class="ti ti-download"></i> Export
+    </button>
+  </div>
+</div>
+
+<!-- CONTENT -->
+<div class="content">
+
+  <!-- DASHBOARD -->
+  <div class="page active" id="page-dashboard">
+    <div class="stats-grid">
+      <div class="stat">
+        <div class="stat-label">Total Quotations</div>
+        <div class="stat-val" id="stat-total">0</div>
+        <div class="stat-sub">All time</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Total Pipeline Value</div>
+        <div class="stat-val gold" id="stat-value">₹0</div>
+        <div class="stat-sub">Across all quotes</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Accepted</div>
+        <div class="stat-val" id="stat-accepted">0</div>
+        <div class="stat-sub" id="stat-accepted-val">—</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Pending Response</div>
+        <div class="stat-val" id="stat-pending">0</div>
+        <div class="stat-sub" id="stat-pending-val">Sent &amp; Draft</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">Recent Activity</span>
+        <button class="btn sm primary" onclick="openNewEditor()">
+          <i class="ti ti-plus"></i> New Quotation
+        </button>
+      </div>
+      <div class="status-strip" id="status-strip"></div>
+      <div class="tbl-wrap" id="recent-list"></div>
+    </div>
+  </div>
+
+  <!-- LIST -->
+  <div class="page" id="page-list">
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">All Quotations</span>
+        <div class="search-row">
+          <input class="search-input" type="text" placeholder="Search client, ID, location…" id="search-input" oninput="renderList()">
+          <select class="search-input" id="filter-status" onchange="renderList()">
+            <option value="">All Status</option>
+            <option>Draft</option>
+            <option>Sent</option>
+            <option>Accepted</option>
+            <option>Rejected</option>
+            <option>Expired</option>
+          </select>
+          <select class="search-input" id="filter-sort" onchange="renderList()">
+            <option value="date_desc">Newest First</option>
+            <option value="date_asc">Oldest First</option>
+            <option value="amount_desc">Highest Amount</option>
+            <option value="amount_asc">Lowest Amount</option>
+          </select>
+          <button class="btn sm primary" onclick="openNewEditor()">
+            <i class="ti ti-plus"></i> New
+          </button>
+        </div>
+      </div>
+      <div class="tbl-wrap" id="list-body"></div>
+    </div>
+  </div>
+
+  <!-- EDITOR -->
+  <div class="page" id="page-editor">
+    <div class="editor-top">
+      <div class="editor-heading" id="editor-title">New Quotation</div>
+      <div class="editor-actions">
+        <button class="btn ghost" onclick="goBack()"><i class="ti ti-arrow-left"></i> Back</button>
+        <button class="btn" onclick="saveQuotation('Draft')"><i class="ti ti-device-floppy"></i> Save Draft</button>
+        <button class="btn" onclick="markStatus('Sent')"><i class="ti ti-send"></i> Mark Sent</button>
+        <button class="btn primary" onclick="saveAndPreview()"><i class="ti ti-eye"></i> Preview &amp; Print</button>
+      </div>
+    </div>
+
+    <div class="editor-layout">
+      <div class="editor-main">
+
+        <!-- Quotation Meta -->
+        <div class="section">
+          <div class="section-title"><i class="ti ti-file-invoice"></i> Quotation Details</div>
+          <div class="form-grid three">
+            <div class="form-group">
+              <label>Quotation No.</label>
+              <input id="f-id" placeholder="JML-2025-001">
+            </div>
+            <div class="form-group">
+              <label>Issue Date</label>
+              <input type="date" id="f-date">
+            </div>
+            <div class="form-group">
+              <label>Valid Until</label>
+              <input type="date" id="f-valid">
+            </div>
+          </div>
+        </div>
+
+        <!-- Client Info -->
+        <div class="section">
+          <div class="section-title"><i class="ti ti-building-store"></i> Client Information</div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Business / Client Name</label>
+              <input id="f-cname" placeholder="e.g. Shri Gomathi Jewellery">
+            </div>
+            <div class="form-group">
+              <label>Contact Person</label>
+              <input id="f-cperson" placeholder="Full name">
+            </div>
+            <div class="form-group">
+              <label>Location</label>
+              <input id="f-cloc" placeholder="City, State">
+            </div>
+            <div class="form-group">
+              <label>Phone / Email</label>
+              <input id="f-ccontact" placeholder="+91 or email">
+            </div>
+            <div class="form-group">
+              <label>GSTIN (optional)</label>
+              <input id="f-cgst" placeholder="Client GSTIN">
+            </div>
+            <div class="form-group">
+              <label>Industry</label>
+              <input id="f-cindustry" placeholder="e.g. Retail, E-commerce">
+            </div>
+          </div>
+        </div>
+
+        <!-- Services -->
+        <div class="section">
+          <div class="section-title"><i class="ti ti-list-check"></i> Services &amp; Pricing</div>
+          <div class="items-table-wrap">
+            <table class="items-table">
+              <thead>
+                <tr>
+                  <th style="width:36px">#</th>
+                  <th>Service / Package</th>
+                  <th>Description</th>
+                  <th style="width:56px">Qty</th>
+                  <th style="width:100px">Rate (₹)</th>
+                  <th style="width:110px; text-align:right">Amount (₹)</th>
+                  <th style="width:36px"></th>
+                </tr>
+              </thead>
+              <tbody id="items-body"></tbody>
+            </table>
+          </div>
+          <button class="add-row-btn" onclick="addItem()">
+            <i class="ti ti-plus"></i> Add service line
+          </button>
+        </div>
+
+        <!-- Terms -->
+        <div class="section">
+          <div class="section-title"><i class="ti ti-file-description"></i> Pricing, Terms &amp; Notes</div>
+          <div class="form-grid four">
+            <div class="form-group">
+              <label>Payment Terms</label>
+              <select id="f-payment" onchange="syncAdvPct()">
+                <option value="40/60">40% advance, 60% mid-package</option>
+                <option value="50/50">50% advance, 50% on completion</option>
+                <option value="100/0">100% advance</option>
+                <option value="custom">Custom split</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Advance %</label>
+              <input type="number" id="f-adv" value="40" min="0" max="100" oninput="updatePreviewSidebar()">
+            </div>
+            <div class="form-group">
+              <label>GST</label>
+              <select id="f-gst" onchange="updatePreviewSidebar()">
+                <option value="0">Not applicable</option>
+                <option value="18">18% GST</option>
+                <option value="12">12% GST</option>
+                <option value="5">5% GST</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Status</label>
+              <select id="f-status">
+                <option>Draft</option>
+                <option>Sent</option>
+                <option>Accepted</option>
+                <option>Rejected</option>
+                <option>Expired</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-grid" style="margin-top:12px">
+            <div class="form-group">
+              <label>Discount (₹ flat)</label>
+              <input type="number" id="f-discount" value="0" min="0" step="100" oninput="updatePreviewSidebar()">
+            </div>
+            <div class="form-group full">
+              <label>Internal Notes (not shown on PDF)</label>
+              <textarea id="f-internal" placeholder="For internal reference only…"></textarea>
+            </div>
+            <div class="form-group full">
+              <label>Client-visible Notes</label>
+              <textarea id="f-notes" placeholder="Special conditions, scope limits, deliverables…"></textarea>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- end editor-main -->
+
+      <!-- SIDEBAR -->
+      <div class="sidebar">
+        <div class="preview-card">
+          <div class="preview-card-title">Live Summary</div>
+          <div id="preview-summary"></div>
+        </div>
+        <div class="preview-card">
+          <div class="preview-card-title">Payment Schedule</div>
+          <div id="preview-payment"></div>
+        </div>
+        <div class="preview-card">
+          <div class="preview-card-title">Quick Actions</div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <button class="btn" style="width:100%;justify-content:center" onclick="saveAndPreview()">
+              <i class="ti ti-printer"></i> Preview &amp; Print PDF
+            </button>
+            <button class="btn" style="width:100%;justify-content:center" onclick="duplicateCurrent()">
+              <i class="ti ti-copy"></i> Duplicate Quotation
+            </button>
+            <button class="btn" style="width:100%;justify-content:center" onclick="markStatus('Sent')">
+              <i class="ti ti-send"></i> Mark as Sent
+            </button>
+            <button class="btn" style="width:100%;justify-content:center" onclick="markStatus('Accepted')">
+              <i class="ti ti-check"></i> Mark Accepted
+            </button>
+            <button class="btn" style="width:100%;justify-content:center" onclick="markStatus('Rejected')">
+              <i class="ti ti-x"></i> Mark Rejected
+            </button>
+            <div class="gold-divider"></div>
+            <button class="btn danger sm" style="width:100%;justify-content:center" id="editor-delete-btn" onclick="confirmDeleteCurrent()" style="display:none">
+              <i class="ti ti-trash"></i> Delete Quotation
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- end editor-layout -->
+  </div>
+
+  <!-- PREVIEW -->
+  <div class="page" id="page-preview">
+    <div class="preview-top no-print">
+      <div style="font-family:var(--font-display);font-size:18px;font-weight:700" id="preview-heading">Quotation Preview</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn ghost" onclick="goBack()"><i class="ti ti-arrow-left"></i> Back</button>
+        <button class="btn" onclick="editFromPreview()"><i class="ti ti-edit"></i> Edit</button>
+        <button class="btn" onclick="downloadJSON()"><i class="ti ti-download"></i> Download JSON</button>
+        <button class="btn primary" onclick="printDoc()"><i class="ti ti-printer"></i> Print / Save PDF</button>
+      </div>
+    </div>
+    <div id="print-area" class="preview-frame"></div>
+  </div>
+
+</div><!-- end content -->
+
+<!-- DELETE MODAL -->
+<div class="modal-backdrop" id="del-modal">
+  <div class="modal">
+    <h3>Delete Quotation?</h3>
+    <p>This will permanently remove the quotation <strong id="del-modal-id"></strong>. This action cannot be undone.</p>
+    <div class="modal-actions">
+      <button class="btn ghost" onclick="closeModal('del-modal')">Cancel</button>
+      <button class="btn danger" id="confirm-del"><i class="ti ti-trash"></i> Delete</button>
+    </div>
+  </div>
+</div>
+
+<!-- IMPORT MODAL -->
+<div class="modal-backdrop" id="import-modal">
+  <div class="modal">
+    <h3>Import Quotations</h3>
+    <p>Import from a previously exported JSON backup. This will <strong>merge</strong> with your existing data (duplicates by ID are updated).</p>
+    <div class="drop-zone" id="drop-zone" onclick="document.getElementById('file-input').click()" ondragover="onDragOver(event)" ondrop="onDrop(event)" ondragleave="onDragLeave(event)">
+      <i class="ti ti-file-upload"></i>
+      <strong>Click or drag & drop</strong><br>
+      <span style="font-size:12px;color:var(--text3)">JSON export file</span>
+    </div>
+    <input type="file" id="file-input" accept=".json" style="display:none" onchange="handleFileSelect(event)">
+    <div class="modal-actions">
+      <button class="btn ghost" onclick="closeModal('import-modal')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- STATUS CHANGE MODAL -->
+<div class="modal-backdrop" id="status-modal">
+  <div class="modal">
+    <h3 id="status-modal-title">Change Status</h3>
+    <p id="status-modal-body"></p>
+    <div class="modal-actions">
+      <button class="btn ghost" onclick="closeModal('status-modal')">Cancel</button>
+      <button class="btn primary" id="confirm-status"><i class="ti ti-check"></i> Confirm</button>
+    </div>
+  </div>
+</div>
+
+<!-- SETTINGS MODAL -->
+<div class="modal-backdrop" id="settings-modal">
+  <div class="modal" style="width:min(520px,100%)">
+    <h3><i class="ti ti-cloud" style="color:var(--gold);font-size:20px;vertical-align:middle;margin-right:8px"></i>Cloud Sync Settings</h3>
+    <p>Connect to your JAC API backend so quotations are stored in MongoDB and synced across all devices.</p>
+    <div class="settings-grid">
+      <div class="settings-row">
+        <label>API Base URL</label>
+        <input id="s-api-url" placeholder="https://jac-api-xxxx.railway.app" type="url">
+        <div class="settings-hint">Your deployed backend URL (Railway, Render, etc). Leave blank to use local storage only.</div>
+      </div>
+      <div class="settings-row">
+        <label>API Key (x-api-key)</label>
+        <input id="s-api-key" placeholder="jac-api-key-2026" type="password">
+        <div class="settings-hint">Must match the API_KEY environment variable set in your backend.</div>
+      </div>
+    </div>
+    <div id="settings-status" style="margin-top:14px;font-size:12px;color:var(--text3)"></div>
+    <div class="modal-actions" style="flex-wrap:wrap;gap:8px">
+      <button class="btn ghost" onclick="closeModal('settings-modal')">Close</button>
+      <button class="btn" onclick="testApiConnection()"><i class="ti ti-plug"></i> Test Connection</button>
+      <button class="btn" onclick="pullFromCloud()"><i class="ti ti-cloud-download"></i> Pull from Cloud</button>
+      <button class="btn" onclick="pushToCloud()"><i class="ti ti-cloud-upload"></i> Push All to Cloud</button>
+      <button class="btn primary" onclick="saveApiSettings()"><i class="ti ti-device-floppy"></i> Save & Enable</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ══════════════════════════════════════════════
+   STATE
+══════════════════════════════════════════════ */
+const STORAGE_KEY = 'jac_quotations_v2';
+const API_SETTINGS_KEY = 'jac_api_settings';
+let quotations = [];
+let editingId = null;
+let deleteTargetId = null;
+let previewingId = null;
+let previousPage = 'dashboard';
+
+/* API state */
+let API_URL = '';
+let API_KEY_VAL = '';
+
+/* ══════════════════════════════════════════════
+   STORAGE — hybrid local + cloud
+══════════════════════════════════════════════ */
+async function load() {
+  /* load API settings from localStorage */
+  try {
+    const s = localStorage.getItem(API_SETTINGS_KEY);
+    if (s) {
+      const p = JSON.parse(s);
+      API_URL = p.url || '';
+      API_KEY_VAL = p.key || '';
+    }
+  } catch(e) {}
+
+  /* update settings form */
+  if (document.getElementById('s-api-url')) {
+    document.getElementById('s-api-url').value = API_URL;
+    document.getElementById('s-api-key').value = API_KEY_VAL;
+  }
+
+  /* try cloud first, fall back to local */
+  if (API_URL && API_KEY_VAL) {
+    const ok = await fetchFromCloud();
+    if (ok) { refreshAll(); return; }
+  }
+
+  /* local fallback */
+  try {
+    const r = localStorage.getItem(STORAGE_KEY);
+    quotations = r ? JSON.parse(r) : [];
+  } catch(e) {
+    quotations = [];
+  }
+  if (!quotations.length) {
+    quotations = getSampleData();
+    await persistSave();
+  }
+  refreshAll();
+  updateSyncBadge('offline');
+}
+
+async function persistSave() {
+  /* always save locally */
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(quotations)); } catch(e) {}
+
+  /* cloud sync if configured */
+  if (API_URL && API_KEY_VAL) {
+    await syncToCloud();
+  }
+}
+
+/* ── CLOUD HELPERS ─────────────────────────── */
+function apiHeaders() {
+  return { 'Content-Type': 'application/json', 'x-api-key': API_KEY_VAL };
+}
+
+async function fetchFromCloud() {
+  try {
+    updateSyncBadge('syncing');
+    const res = await fetch(API_URL + '/api/quotations', { headers: apiHeaders() });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+    quotations = Array.isArray(data) ? data : [];
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(quotations));
+    updateSyncBadge('synced');
+    return true;
+  } catch(e) {
+    updateSyncBadge('error');
+    return false;
+  }
+}
+
+async function syncToCloud() {
+  try {
+    updateSyncBadge('syncing');
+    const res = await fetch(API_URL + '/api/quotations/sync', {
+      method: 'POST',
+      headers: apiHeaders(),
+      body: JSON.stringify({ quotations }),
+    });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    updateSyncBadge('synced');
+  } catch(e) {
+    updateSyncBadge('error');
+    toast('Cloud sync failed — saved locally', 'error');
+  }
+}
+
+async function upsertToCloud(q) {
+  if (!API_URL || !API_KEY_VAL) return;
+  try {
+    await fetch(API_URL + '/api/quotations/' + encodeURIComponent(q.id), {
+      method: 'PUT',
+      headers: apiHeaders(),
+      body: JSON.stringify(q),
+    });
+    updateSyncBadge('synced');
+  } catch(e) {
+    updateSyncBadge('error');
+  }
+}
+
+async function deleteFromCloud(id) {
+  if (!API_URL || !API_KEY_VAL) return;
+  try {
+    await fetch(API_URL + '/api/quotations/' + encodeURIComponent(id), {
+      method: 'DELETE', headers: apiHeaders(),
+    });
+  } catch(e) {}
+}
+
+/* ── SYNC BADGE ────────────────────────────── */
+function updateSyncBadge(state) {
+  const badge = document.getElementById('sync-badge');
+  const dot   = document.getElementById('sync-dot');
+  const label = document.getElementById('sync-label');
+  badge.className = 'sync-badge ' + state;
+  dot.className   = 'sync-dot' + (state === 'syncing' ? ' pulse' : '');
+  const labels = { synced: 'Synced', syncing: 'Syncing…', error: 'Sync error', offline: 'Local only' };
+  label.textContent = labels[state] || 'Local only';
+}
+
+/* ── SETTINGS ACTIONS ──────────────────────── */
+function saveApiSettings() {
+  API_URL     = (document.getElementById('s-api-url').value || '').trim().replace(/\/$/, '');
+  API_KEY_VAL = (document.getElementById('s-api-key').value || '').trim();
+  localStorage.setItem(API_SETTINGS_KEY, JSON.stringify({ url: API_URL, key: API_KEY_VAL }));
+  if (API_URL && API_KEY_VAL) {
+    updateSyncBadge('syncing');
+    fetchFromCloud().then(ok => {
+      if (ok) { refreshAll(); toast('Connected & synced from cloud ✓', 'success'); }
+      else toast('Saved but connection failed. Check URL and API key.', 'error');
+    });
+  } else {
+    updateSyncBadge('offline');
+    toast('API settings cleared — using local storage', 'info');
+  }
+  closeModal('settings-modal');
+}
+
+async function testApiConnection() {
+  const url = (document.getElementById('s-api-url').value || '').trim().replace(/\/$/, '');
+  const key = (document.getElementById('s-api-key').value || '').trim();
+  const statusEl = document.getElementById('settings-status');
+  statusEl.textContent = '⏳ Testing…';
+  try {
+    const res = await fetch(url + '/', { headers: { 'x-api-key': key } });
+    const data = await res.json();
+    statusEl.innerHTML = `<span style="color:var(--success)">✓ Connected — ${data.service || 'API OK'} v${data.version || '?'}</span>`;
+  } catch(e) {
+    statusEl.innerHTML = `<span style="color:var(--danger)">✕ Failed: ${e.message}</span>`;
+  }
+}
+
+async function pullFromCloud() {
+  const url = (document.getElementById('s-api-url').value || '').trim().replace(/\/$/, '');
+  const key = (document.getElementById('s-api-key').value || '').trim();
+  const statusEl = document.getElementById('settings-status');
+  statusEl.textContent = '⏳ Pulling from cloud…';
+  try {
+    const res = await fetch(url + '/api/quotations', { headers: { 'Content-Type': 'application/json', 'x-api-key': key } });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+    quotations = Array.isArray(data) ? data : [];
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(quotations));
+    refreshAll();
+    statusEl.innerHTML = `<span style="color:var(--success)">✓ Pulled ${quotations.length} quotations from cloud</span>`;
+    updateSyncBadge('synced');
+  } catch(e) {
+    statusEl.innerHTML = `<span style="color:var(--danger)">✕ Pull failed: ${e.message}</span>`;
+  }
+}
+
+async function pushToCloud() {
+  const url = (document.getElementById('s-api-url').value || '').trim().replace(/\/$/, '');
+  const key = (document.getElementById('s-api-key').value || '').trim();
+  const statusEl = document.getElementById('settings-status');
+  statusEl.textContent = '⏳ Pushing to cloud…';
+  try {
+    const res = await fetch(url + '/api/quotations/sync', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-api-key': key },
+      body: JSON.stringify({ quotations }),
+    });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+    statusEl.innerHTML = `<span style="color:var(--success)">✓ Pushed ${data.synced} quotations to cloud</span>`;
+    updateSyncBadge('synced');
+  } catch(e) {
+    statusEl.innerHTML = `<span style="color:var(--danger)">✕ Push failed: ${e.message}</span>`;
+  }
+}
+
+/* ══════════════════════════════════════════════
+   SAMPLE DATA
+══════════════════════════════════════════════ */
+function getSampleData() {
+  const today = new Date();
+  const d = (offset) => {
+    const dt = new Date(today);
+    dt.setDate(dt.getDate() + offset);
+    return dt.toISOString().slice(0,10);
+  };
+  return [
+    {
+      id: 'JML-2025-041',
+      date: d(-10), valid: d(20),
+      client: { name: 'Shri Gomathi Imitation Jewellery', person: 'Mr. Vijay Kumar', location: 'Erode, Tamil Nadu', contact: '+91 98765 43210', gstin: '', industry: 'Retail' },
+      items: [
+        { service: 'Social Media Management', desc: 'Instagram & Facebook — 20 posts/month, captions, scheduling', qty: 1, rate: 3500 },
+        { service: 'Reels / Short-form Video Editing', desc: 'Up to 8 reels/month (raw footage provided by client)', qty: 1, rate: 2500 },
+        { service: 'Graphic Design', desc: 'Promotional banners, story templates, festival creatives', qty: 1, rate: 1800 },
+        { service: 'Basic SEO & Google Presence', desc: 'GMB optimisation, keyword tracking, monthly report', qty: 1, rate: 2000 },
+        { service: 'WhatsApp Broadcast Design', desc: 'Monthly promotional message with designed creative', qty: 1, rate: 600 },
+        { service: 'Monthly Report & Strategy Call', desc: 'Performance report + 30-min consultation', qty: 1, rate: 1000 },
+      ],
+      payment: '40/60', advPct: 40, gst: 0, discount: 0,
+      notes: 'Package valid for one month. Renewal on mutual agreement.', internal: '',
+      status: 'Sent', createdAt: new Date(Date.now()-10*86400000).toISOString()
+    },
+    {
+      id: 'JML-2025-040',
+      date: d(-25), valid: d(5),
+      client: { name: 'Tulsi Boutique', person: 'Ms. Priya Nair', location: 'Coimbatore, Tamil Nadu', contact: '+91 87654 32109', gstin: '', industry: 'Fashion' },
+      items: [
+        { service: 'Instagram Content Creation', desc: '25 posts/month with stories', qty: 1, rate: 4000 },
+        { service: 'Product Photography Direction', desc: 'Monthly shoot planning & style guide', qty: 1, rate: 2000 },
+        { service: 'Meta Ads Management', desc: 'Campaign setup + ₹5,000 ad budget management', qty: 1, rate: 2500 },
+      ],
+      payment: '50/50', advPct: 50, gst: 18, discount: 0,
+      notes: '', internal: 'Lead from referral — Vijay Kumar',
+      status: 'Accepted', createdAt: new Date(Date.now()-25*86400000).toISOString()
+    },
+    {
+      id: 'JML-2025-039',
+      date: d(-45), valid: d(-15),
+      client: { name: 'Kanha Restaurant', person: 'Anand Sharma', location: 'Salem, Tamil Nadu', contact: '+91 76543 21098', gstin: '', industry: 'F&B' },
+      items: [
+        { service: 'Social Media & Reels Package', desc: 'Complete social presence', qty: 1, rate: 5500 },
+        { service: 'Menu Design (Digital)', desc: 'Full digital menu with monthly updates', qty: 1, rate: 1500 },
+      ],
+      payment: '40/60', advPct: 40, gst: 0, discount: 500,
+      notes: '', internal: '',
+      status: 'Expired', createdAt: new Date(Date.now()-45*86400000).toISOString()
+    },
+    {
+      id: 'JML-2025-038',
+      date: d(-3), valid: d(27),
+      client: { name: 'Greenleaf Organics', person: 'Divya Mohan', location: 'Chennai, Tamil Nadu', contact: 'divya@greenleaf.in', gstin: 'GSTIN123456', industry: 'Health & Wellness' },
+      items: [
+        { service: 'Full Digital Marketing Package', desc: 'Social media, SEO, content marketing', qty: 1, rate: 8000 },
+        { service: 'Email Marketing Setup', desc: 'Newsletter template + 4 campaigns/month', qty: 1, rate: 2000 },
+        { service: 'Website Content Update', desc: 'Monthly blog posts (4 articles)', qty: 1, rate: 2500 },
+      ],
+      payment: '40/60', advPct: 40, gst: 18, discount: 0,
+      notes: 'Organic brand — all content must align with eco-friendly values.', internal: 'High-value lead. Priority client.',
+      status: 'Draft', createdAt: new Date(Date.now()-3*86400000).toISOString()
+    }
+  ];
+}
+
+/* ══════════════════════════════════════════════
+   NAVIGATION
+══════════════════════════════════════════════ */
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  const navMap = { dashboard: 'nav-dashboard', list: 'nav-list', editor: 'nav-new', preview: null };
+  if (navMap[name]) document.getElementById(navMap[name]).classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function goBack() {
+  if (previousPage === 'preview') { showPage('preview'); return; }
+  showPage(previousPage || 'list');
+}
+
+function openNewEditor() {
+  previousPage = getCurrentPage();
+  newQuotation();
+  showPage('editor');
+}
+
+function getCurrentPage() {
+  const active = document.querySelector('.page.active');
+  if (!active) return 'dashboard';
+  return active.id.replace('page-', '');
+}
+
+/* ══════════════════════════════════════════════
+   REFRESH ALL
+══════════════════════════════════════════════ */
+function refreshAll() {
+  renderDashboard();
+  renderList();
+}
+
+/* ══════════════════════════════════════════════
+   DASHBOARD
+══════════════════════════════════════════════ */
+function renderDashboard() {
+  const total = quotations.length;
+  const allTotals = quotations.map(q => calcTotal(q.items, q.gst, q.discount).total);
+  const totalValue = allTotals.reduce((a,b) => a+b, 0);
+  const accepted = quotations.filter(q => q.status === 'Accepted');
+  const pending = quotations.filter(q => q.status === 'Sent' || q.status === 'Draft');
+
+  document.getElementById('stat-total').textContent = total;
+  document.getElementById('stat-value').textContent = fmt(totalValue);
+  document.getElementById('stat-accepted').textContent = accepted.length;
+  document.getElementById('stat-accepted-val').textContent = fmt(accepted.reduce((s,q) => s + calcTotal(q.items,q.gst,q.discount).total,0)) + ' value';
+  document.getElementById('stat-pending').textContent = pending.length;
+  document.getElementById('stat-pending-val').textContent = fmt(pending.reduce((s,q) => s + calcTotal(q.items,q.gst,q.discount).total,0)) + ' potential';
+
+  // Status strip
+  const statuses = ['Draft','Sent','Accepted','Rejected','Expired'];
+  const counts = {};
+  statuses.forEach(s => counts[s] = quotations.filter(q=>q.status===s).length);
+  document.getElementById('status-strip').innerHTML = statuses.map(s => `
+    <div class="status-pill" onclick="filterByStatus('${s}')">
+      <span class="count">${counts[s]}</span>
+      ${s}
+    </div>`).join('');
+
+  // Recent (last 8)
+  const recent = [...quotations].sort((a,b) => new Date(b.createdAt)-new Date(a.createdAt)).slice(0,8);
+  document.getElementById('recent-list').innerHTML = recent.length
+    ? tableHTML(recent, false)
+    : `<div class="empty"><i class="ti ti-file-off"></i>No quotations yet. Create your first one!</div>`;
+}
+
+function filterByStatus(s) {
+  showPage('list');
+  document.getElementById('filter-status').value = s;
+  renderList();
+}
+
+/* ══════════════════════════════════════════════
+   LIST
+══════════════════════════════════════════════ */
+function renderList() {
+  const q = (document.getElementById('search-input').value || '').toLowerCase();
+  const s = document.getElementById('filter-status').value;
+  const sort = document.getElementById('filter-sort').value;
+
+  let filtered = quotations.filter(x => {
+    const matchQ = !q ||
+      x.id.toLowerCase().includes(q) ||
+      x.client.name.toLowerCase().includes(q) ||
+      (x.client.location||'').toLowerCase().includes(q) ||
+      (x.client.person||'').toLowerCase().includes(q);
+    const matchS = !s || x.status === s;
+    return matchQ && matchS;
+  });
+
+  if (sort === 'date_asc') filtered.sort((a,b) => new Date(a.createdAt)-new Date(b.createdAt));
+  else if (sort === 'amount_desc') filtered.sort((a,b) => calcTotal(b.items,b.gst,b.discount).total - calcTotal(a.items,a.gst,a.discount).total);
+  else if (sort === 'amount_asc') filtered.sort((a,b) => calcTotal(a.items,a.gst,a.discount).total - calcTotal(b.items,b.gst,b.discount).total);
+  else filtered.sort((a,b) => new Date(b.createdAt)-new Date(a.createdAt));
+
+  document.getElementById('list-body').innerHTML = filtered.length
+    ? tableHTML(filtered, true)
+    : `<div class="empty"><i class="ti ti-search-off"></i>No quotations match your search.</div>`;
+}
+
+/* ══════════════════════════════════════════════
+   TABLE HTML
+══════════════════════════════════════════════ */
+function tableHTML(rows, showValidity) {
+  const today = new Date().toISOString().slice(0,10);
+  let h = `<table><thead><tr>
+    <th>ID</th><th>Client</th><th>Date</th>
+    ${showValidity ? '<th>Valid Until</th>' : ''}
+    <th>Services</th><th>Amount</th><th>Status</th><th></th>
+  </tr></thead><tbody>`;
+
+  rows.forEach(q => {
+    const { total } = calcTotal(q.items, q.gst, q.discount);
+    const isExpiring = q.valid && q.valid < today && q.status !== 'Expired' && q.status !== 'Accepted' && q.status !== 'Rejected';
+    h += `<tr>
+      <td class="tbl-id">${q.id}</td>
+      <td>
+        <div class="tbl-client">${esc(q.client.name)}</div>
+        <div style="font-size:11px;color:var(--text3)">${esc(q.client.location||'')}</div>
+      </td>
+      <td style="font-size:12px;color:var(--text2)">${q.date}</td>
+      ${showValidity ? `<td style="font-size:12px;color:${isExpiring?'var(--danger)':'var(--text2)'}">
+        ${q.valid||'—'}${isExpiring?' <span title="Validity expired" style="color:var(--danger)">⚠</span>':''}
+      </td>` : ''}
+      <td style="font-size:12px;color:var(--text2)">${q.items.length} line${q.items.length!==1?'s':''}</td>
+      <td class="tbl-amount">${fmt(total)}</td>
+      <td>${badgeHTML(q.status)}</td>
+      <td>
+        <div class="tbl-actions">
+          <button class="icon-btn" title="Edit" onclick="editQuotation('${q.id}')"><i class="ti ti-edit"></i></button>
+          <button class="icon-btn" title="Preview & Print" onclick="previewQuotation('${q.id}')"><i class="ti ti-eye"></i></button>
+          <button class="icon-btn" title="Duplicate" onclick="duplicateById('${q.id}')"><i class="ti ti-copy"></i></button>
+          <button class="icon-btn red" title="Delete" onclick="confirmDelete('${q.id}')"><i class="ti ti-trash"></i></button>
+        </div>
+      </td>
+    </tr>`;
+  });
+  return h + '</tbody></table>';
+}
+
+/* ══════════════════════════════════════════════
+   BADGE & FORMAT HELPERS
+══════════════════════════════════════════════ */
+function badgeHTML(s) {
+  const map = { Draft:'draft', Sent:'sent', Accepted:'accepted', Rejected:'rejected', Expired:'expired' };
+  return `<span class="badge ${map[s]||'draft'}">${s}</span>`;
+}
+
+function fmt(n) {
+  return '₹' + Math.round(n).toLocaleString('en-IN');
+}
+
+function fmtDate(d) {
+  if (!d) return '—';
+  const dt = new Date(d);
+  return dt.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+}
+
+function esc(s) {
+  if (!s) return '';
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function calcTotal(items, gst, discount) {
+  const sub = items.reduce((s, i) => s + (parseFloat(i.qty)||0)*(parseFloat(i.rate)||0), 0);
+  const disc = parseFloat(discount || 0);
+  const discounted = Math.max(0, sub - disc);
+  const gstAmt = discounted * (parseFloat(gst||0) / 100);
+  return { sub, disc, discounted, gstAmt, total: discounted + gstAmt };
+}
+
+function nextId() {
+  const year = new Date().getFullYear();
+  const nums = quotations.map(q => { const m = q.id.match(/(\d+)$/); return m ? parseInt(m[1]) : 0; });
+  const next = (nums.length ? Math.max(...nums) : 40) + 1;
+  return `JML-${year}-${String(next).padStart(3,'0')}`;
+}
+
+/* ══════════════════════════════════════════════
+   EDITOR
+══════════════════════════════════════════════ */
+function newQuotation() {
+  editingId = null;
+  document.getElementById('editor-title').textContent = 'New Quotation';
+  document.getElementById('editor-delete-btn').style.display = 'none';
+  const today = new Date().toISOString().slice(0,10);
+  const valid = new Date(Date.now() + 30*86400000).toISOString().slice(0,10);
+  V('f-id', nextId());
+  V('f-date', today);
+  V('f-valid', valid);
+  V('f-cname', ''); V('f-cperson', ''); V('f-cloc', '');
+  V('f-ccontact', ''); V('f-cgst', ''); V('f-cindustry', '');
+  V('f-payment', '40/60');
+  V('f-adv', 40);
+  V('f-gst', 0);
+  V('f-discount', 0);
+  V('f-notes', '');
+  V('f-internal', '');
+  V('f-status', 'Draft');
+  clearItems();
+  [
+    ['Social Media Management', 'Instagram & Facebook — 20 posts/month, captions, scheduling', 1, 3500],
+    ['Graphic Design', 'Promotional banners, story templates, festival creatives', 1, 1800],
+    ['Monthly Report & Strategy Call', 'Performance report + 30-min consultation', 1, 1000],
+  ].forEach(r => addItemRow(...r));
+  updatePreviewSidebar();
+}
+
+function editQuotation(id) {
+  const q = quotations.find(x => x.id === id);
+  if (!q) return;
+  editingId = id;
+  previousPage = getCurrentPage();
+  document.getElementById('editor-title').textContent = 'Edit — ' + id;
+  document.getElementById('editor-delete-btn').style.display = '';
+  V('f-id', q.id);
+  V('f-date', q.date);
+  V('f-valid', q.valid||'');
+  V('f-cname', q.client.name);
+  V('f-cperson', q.client.person||'');
+  V('f-cloc', q.client.location||'');
+  V('f-ccontact', q.client.contact||'');
+  V('f-cgst', q.client.gstin||'');
+  V('f-cindustry', q.client.industry||'');
+  V('f-payment', q.payment||'40/60');
+  V('f-adv', q.advPct||40);
+  V('f-gst', q.gst||0);
+  V('f-discount', q.discount||0);
+  V('f-notes', q.notes||'');
+  V('f-internal', q.internal||'');
+  V('f-status', q.status||'Draft');
+  clearItems();
+  q.items.forEach(it => addItemRow(it.service, it.desc, it.qty, it.rate));
+  updatePreviewSidebar();
+  showPage('editor');
+}
+
+function V(id, val) {
+  const el = document.getElementById(id);
+  if (el) el.value = val;
+}
+
+function clearItems() {
+  document.getElementById('items-body').innerHTML = '';
+}
+
+function addItem() { addItemRow('', '', 1, 0); }
+
+function addItemRow(service='', desc='', qty=1, rate=0) {
+  const tbody = document.getElementById('items-body');
+  const idx = tbody.rows.length + 1;
+  const tr = document.createElement('tr');
+  tr.innerHTML = `
+    <td style="text-align:center;color:var(--text3);font-size:11px;width:36px">${idx}</td>
+    <td><input value="${esc(service)}" placeholder="Service name" oninput="updatePreviewSidebar()"></td>
+    <td><input value="${esc(desc)}" placeholder="Brief description"></td>
+    <td><input type="number" value="${qty}" min="1" style="width:52px" oninput="updatePreviewSidebar()"></td>
+    <td><input type="number" value="${rate}" min="0" step="100" style="width:92px" oninput="updatePreviewSidebar()"></td>
+    <td class="row-amount">₹${Math.round(qty*rate).toLocaleString('en-IN')}</td>
+    <td><button class="icon-btn red" title="Remove" onclick="this.closest('tr').remove();reindexItems();updatePreviewSidebar()"><i class="ti ti-x"></i></button></td>`;
+  tbody.appendChild(tr);
+}
+
+function reindexItems() {
+  document.querySelectorAll('#items-body tr').forEach((tr, i) => {
+    tr.cells[0].textContent = i + 1;
+  });
+}
+
+function getItems() {
+  return Array.from(document.querySelectorAll('#items-body tr')).map(tr => ({
+    service: tr.cells[1].querySelector('input').value,
+    desc: tr.cells[2].querySelector('input').value,
+    qty: parseFloat(tr.cells[3].querySelector('input').value) || 0,
+    rate: parseFloat(tr.cells[4].querySelector('input').value) || 0,
+  }));
+}
+
+function syncAdvPct() {
+  const map = { '40/60': 40, '50/50': 50, '100/0': 100, 'custom': null };
+  const val = document.getElementById('f-payment').value;
+  if (map[val] !== null && map[val] !== undefined) {
+    document.getElementById('f-adv').value = map[val];
+    updatePreviewSidebar();
+  }
+}
+
+function updatePreviewSidebar() {
+  const items = getItems();
+  items.forEach((it, i) => {
+    const rows = document.querySelectorAll('#items-body tr');
+    if (rows[i]) rows[i].querySelector('.row-amount').textContent = '₹' + Math.round(it.qty * it.rate).toLocaleString('en-IN');
+  });
+
+  const gst = parseFloat(document.getElementById('f-gst').value) || 0;
+  const disc = parseFloat(document.getElementById('f-discount').value) || 0;
+  const { sub, discounted, gstAmt, total } = calcTotal(items, gst, disc);
+  const adv = parseFloat(document.getElementById('f-adv').value) || 40;
+  const bal = 100 - adv;
+  const advAmt = total * adv / 100;
+  const balAmt = total * bal / 100;
+
+  let sumHTML = `
+    <div class="summary-row"><span class="label">Subtotal</span><span>${fmt(sub)}</span></div>`;
+  if (disc) sumHTML += `<div class="summary-row"><span class="label">Discount</span><span>−${fmt(disc)}</span></div>`;
+  if (gst) sumHTML += `<div class="summary-row"><span class="label">GST (${gst}%)</span><span>${fmt(gstAmt)}</span></div>`;
+  sumHTML += `<div class="summary-row"><span>Total</span><span class="summary-total">${fmt(total)}</span></div>`;
+  document.getElementById('preview-summary').innerHTML = sumHTML;
+
+  document.getElementById('preview-payment').innerHTML = `
+    <div class="pay-pill"><span>${adv}% advance</span><span class="amount">${fmt(advAmt)}</span></div>
+    <div class="pay-pill"><span>${bal}% balance</span><span class="amount">${fmt(balAmt)}</span></div>
+    <div class="pay-pill"><span style="font-weight:500">Total</span><span class="amount">${fmt(total)}</span></div>`;
+}
+
+function readForm() {
+  return {
+    id: document.getElementById('f-id').value.trim(),
+    date: document.getElementById('f-date').value,
+    valid: document.getElementById('f-valid').value,
+    client: {
+      name: document.getElementById('f-cname').value.trim(),
+      person: document.getElementById('f-cperson').value.trim(),
+      location: document.getElementById('f-cloc').value.trim(),
+      contact: document.getElementById('f-ccontact').value.trim(),
+      gstin: document.getElementById('f-cgst').value.trim(),
+      industry: document.getElementById('f-cindustry').value.trim(),
+    },
+    items: getItems(),
+    payment: document.getElementById('f-payment').value,
+    advPct: parseFloat(document.getElementById('f-adv').value) || 40,
+    gst: parseFloat(document.getElementById('f-gst').value) || 0,
+    discount: parseFloat(document.getElementById('f-discount').value) || 0,
+    notes: document.getElementById('f-notes').value.trim(),
+    internal: document.getElementById('f-internal').value.trim(),
+    status: document.getElementById('f-status').value,
+    createdAt: editingId
+      ? (quotations.find(q => q.id === editingId) || {}).createdAt || new Date().toISOString()
+      : new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
+}
+
+async function saveQuotation(statusOverride) {
+  const q = readForm();
+  if (statusOverride) q.status = statusOverride;
+  if (!q.client.name) { toast('Please enter a client name', 'error'); return null; }
+  if (!q.id) { toast('Please enter a quotation ID', 'error'); return null; }
+
+  if (editingId) {
+    const idx = quotations.findIndex(x => x.id === editingId);
+    if (idx >= 0) quotations[idx] = q;
+    else quotations.unshift(q);
+    editingId = q.id;
+  } else {
+    if (quotations.find(x => x.id === q.id)) {
+      toast('Quotation ID already exists — changed to ' + nextId(), 'info');
+      q.id = nextId();
+    }
+    quotations.unshift(q);
+    editingId = q.id;
+  }
+  document.getElementById('f-status').value = q.status;
+  document.getElementById('editor-title').textContent = 'Edit — ' + q.id;
+  document.getElementById('editor-delete-btn').style.display = '';
+
+  /* local save */
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(quotations)); } catch(e) {}
+  /* cloud upsert (single doc — faster than full sync) */
+  await upsertToCloud(q);
+
+  refreshAll();
+  toast(`Quotation ${q.id} saved${statusOverride ? ' as ' + statusOverride : ''}`, 'success');
+  return q;
+}
+
+async function saveAndPreview() {
+  const q = await saveQuotation();
+  if (q) {
+    previewingId = q.id;
+    renderPrintArea(q);
+    previousPage = 'editor';
+    showPage('preview');
+    document.getElementById('preview-heading').textContent = `Preview — ${q.id}`;
+  }
+}
+
+async function markStatus(s) {
+  document.getElementById('f-status').value = s;
+  await saveQuotation(s);
+}
+
+function editFromPreview() {
+  if (previewingId) {
+    editQuotation(previewingId);
+  } else {
+    showPage('editor');
+  }
+}
+
+function duplicateCurrent() {
+  const q = readForm();
+  q.id = nextId();
+  q.date = new Date().toISOString().slice(0,10);
+  q.status = 'Draft';
+  q.createdAt = new Date().toISOString();
+  quotations.unshift(q);
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(quotations)); } catch(e) {}
+  upsertToCloud(q).then(() => { refreshAll(); editQuotation(q.id); });
+  toast('Duplicated as ' + q.id, 'info');
+}
+
+function duplicateById(id) {
+  const q = JSON.parse(JSON.stringify(quotations.find(x => x.id === id)));
+  q.id = nextId();
+  q.date = new Date().toISOString().slice(0,10);
+  q.status = 'Draft';
+  q.createdAt = new Date().toISOString();
+  quotations.unshift(q);
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(quotations)); } catch(e) {}
+  upsertToCloud(q).then(() => { refreshAll(); editQuotation(q.id); });
+  toast('Duplicated as ' + q.id, 'info');
+}
+
+/* ══════════════════════════════════════════════
+   DELETE
+══════════════════════════════════════════════ */
+function confirmDelete(id) {
+  deleteTargetId = id;
+  document.getElementById('del-modal-id').textContent = id;
+  openModal('del-modal');
+}
+
+function confirmDeleteCurrent() {
+  if (editingId) confirmDelete(editingId);
+}
+
+document.getElementById('confirm-del').onclick = async () => {
+  const id = deleteTargetId;
+  quotations = quotations.filter(q => q.id !== id);
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(quotations)); } catch(e) {}
+  await deleteFromCloud(id);
+  refreshAll();
+  closeModal('del-modal');
+  toast('Quotation deleted', 'info');
+  if (editingId === deleteTargetId) {
+    editingId = null;
+    showPage('list');
+  }
+};
+
+/* ══════════════════════════════════════════════
+   PREVIEW / PRINT
+══════════════════════════════════════════════ */
+function previewQuotation(id) {
+  const q = quotations.find(x => x.id === id);
+  if (!q) return;
+  previewingId = id;
+  renderPrintArea(q);
+  previousPage = getCurrentPage();
+  showPage('preview');
+  document.getElementById('preview-heading').textContent = `Preview — ${id}`;
+}
+
+function renderPrintArea(q) {
+  const { sub, disc, discounted, gstAmt, total } = calcTotal(q.items, q.gst, q.discount);
+  const adv = q.advPct || 40;
+  const bal = 100 - adv;
+  const advAmt = total * adv / 100;
+  const balAmt = total * bal / 100;
+  const exitMin = total * 0.75;
+
+  const amtInWords = n => {
+    if (n <= 0) return 'Zero Only';
+    if (n >= 10000000) return '₹' + (n/10000000).toFixed(2) + ' Crore Only';
+    if (n >= 100000) return '₹' + (n/100000).toFixed(2) + ' Lakh Only';
+    const ones = ['','One','Two','Three','Four','Five','Six','Seven','Eight','Nine',
+      'Ten','Eleven','Twelve','Thirteen','Fourteen','Fifteen','Sixteen','Seventeen','Eighteen','Nineteen'];
+    const tens = ['','','Twenty','Thirty','Forty','Fifty','Sixty','Seventy','Eighty','Ninety'];
+    const toWord = (num) => {
+      if (num === 0) return '';
+      if (num < 20) return ones[num] + ' ';
+      if (num < 100) return tens[Math.floor(num/10)] + (num%10 ? ' '+ones[num%10]+' ' : ' ');
+      return ones[Math.floor(num/100)] + ' Hundred ' + toWord(num%100);
+    };
+    const th = Math.floor(n / 1000), rem = n % 1000;
+    let w = '';
+    if (th) w += toWord(th) + 'Thousand ';
+    w += toWord(rem);
+    return 'Rupees ' + w.trim() + ' Only';
+  };
+
+  const itemRows = q.items.map((it, i) => `
+    <tr style="background:${i%2===0?'#fff':'#fdf8f0'}">
+      <td style="padding:9px 12px;text-align:center;color:#999;font-size:12px;border-bottom:1px solid #f0e8d8">${i+1}</td>
+      <td style="padding:9px 12px;font-weight:600;border-bottom:1px solid #f0e8d8;font-size:13px">${esc(it.service)}</td>
+      <td style="padding:9px 12px;color:#666;font-size:12px;border-bottom:1px solid #f0e8d8">${esc(it.desc)}</td>
+      <td style="padding:9px 12px;text-align:center;border-bottom:1px solid #f0e8d8;font-size:13px">${it.qty}</td>
+      <td style="padding:9px 12px;text-align:right;border-bottom:1px solid #f0e8d8;font-size:13px">₹${Math.round(it.rate).toLocaleString('en-IN')}</td>
+      <td style="padding:9px 12px;text-align:right;border-bottom:1px solid #f0e8d8;font-weight:600;font-size:13px">₹${Math.round(it.qty*it.rate).toLocaleString('en-IN')}</td>
+    </tr>`).join('');
+
+  document.getElementById('print-area').innerHTML = `
+    <!-- HEADER -->
+    <div style="text-align:center;margin-bottom:24px">
+      <div style="font-size:30px;font-weight:800;letter-spacing:5px;color:#1a1a1a;font-family:'Playfair Display',Georgia,serif">JAC MEDIALAND</div>
+      <div style="font-size:13px;color:#888;margin-top:5px">Digital Marketing &amp; Creative Agency</div>
+      <div style="font-size:11px;color:#bbb;margin-top:4px">hello@jacmedialand.in &nbsp;|&nbsp; +91 98765 43210 &nbsp;|&nbsp; www.jacmedialand.in</div>
+    </div>
+    <div style="height:2px;background:linear-gradient(to right, #b8860b, #7a5800, #b8860b);margin:0 0 20px;opacity:.7"></div>
+
+    <!-- TITLE + META -->
+    <div style="text-align:center;margin-bottom:18px">
+      <div style="font-size:20px;font-weight:700;color:#b8860b;letter-spacing:6px;text-transform:uppercase">QUOTATION</div>
+    </div>
+    <div style="display:flex;justify-content:space-between;font-size:12px;color:#555;margin-bottom:4px">
+      <span>Quotation No: <strong style="color:#1a1a1a">${esc(q.id)}</strong></span>
+      <span>Date: <strong style="color:#1a1a1a">${q.date}</strong></span>
+    </div>
+    <div style="display:flex;justify-content:space-between;font-size:12px;color:#555;margin-bottom:18px">
+      <span>Valid Until: <strong style="color:${q.valid && q.valid < new Date().toISOString().slice(0,10) ? '#c0392b':'#1a1a1a'}">${q.valid||'30 days from issue'}</strong></span>
+      <span>Prepared By: <strong style="color:#1a1a1a">JAC MediaLand Team</strong></span>
+    </div>
+
+    <div style="height:1px;background:#e8d8b0;margin-bottom:18px"></div>
+
+    <!-- CLIENT -->
+    <div style="display:flex;gap:20px;margin-bottom:20px">
+      <div style="flex:1;padding:14px 16px;border-left:4px solid #b8860b;background:#fdf8f0;border-radius:0 6px 6px 0">
+        <div style="font-size:10px;font-weight:700;color:#b8860b;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px">Prepared For</div>
+        <div style="font-size:17px;font-weight:700;margin-bottom:4px">${esc(q.client.name)}</div>
+        ${q.client.person?`<div style="font-size:12px;color:#666;margin-bottom:2px">Attn: ${esc(q.client.person)}</div>`:''}
+        ${q.client.location?`<div style="font-size:12px;color:#777">${esc(q.client.location)}</div>`:''}
+        ${q.client.contact?`<div style="font-size:12px;color:#777">${esc(q.client.contact)}</div>`:''}
+        ${q.client.gstin?`<div style="font-size:11px;color:#999;margin-top:4px">GSTIN: ${esc(q.client.gstin)}</div>`:''}
+      </div>
+      <div style="width:160px;padding:14px;border:1px solid #e8d8b0;border-radius:6px;text-align:center;background:#fff">
+        <div style="font-size:10px;font-weight:700;color:#b8860b;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">Status</div>
+        <div style="font-size:14px;font-weight:700;color:${q.status==='Accepted'?'#27ae60':q.status==='Rejected'?'#e74c3c':'#b8860b'}">${q.status}</div>
+        ${q.client.industry?`<div style="font-size:11px;color:#999;margin-top:8px">${esc(q.client.industry)}</div>`:''}
+      </div>
+    </div>
+
+    <!-- SERVICES -->
+    <div style="font-size:10px;font-weight:700;color:#b8860b;letter-spacing:2px;text-transform:uppercase;margin-bottom:10px">Services &amp; Pricing</div>
+    <table style="width:100%;border-collapse:collapse;font-size:13px;margin-bottom:14px">
+      <thead>
+        <tr style="background:#1a1a1a;color:#b8860b">
+          <th style="padding:9px 12px;text-align:center;font-size:11px;letter-spacing:1px;width:36px">#</th>
+          <th style="padding:9px 12px;text-align:left;font-size:11px;letter-spacing:1px">Service</th>
+          <th style="padding:9px 12px;text-align:left;font-size:11px;letter-spacing:1px">Description</th>
+          <th style="padding:9px 12px;text-align:center;font-size:11px;letter-spacing:1px;width:48px">Qty</th>
+          <th style="padding:9px 12px;text-align:right;font-size:11px;letter-spacing:1px;width:88px">Rate</th>
+          <th style="padding:9px 12px;text-align:right;font-size:11px;letter-spacing:1px;width:88px">Amount</th>
+        </tr>
+      </thead>
+      <tbody>${itemRows}</tbody>
+    </table>
+
+    <!-- TOTALS -->
+    <div style="display:flex;justify-content:flex-end;margin-bottom:16px">
+      <div style="border-left:4px solid #b8860b;padding:12px 16px;min-width:240px;background:#fdf8f0;border-radius:0 6px 6px 0">
+        <div style="display:flex;justify-content:space-between;font-size:13px;padding:4px 0;border-bottom:1px solid #e8d8b0"><span style="color:#666">Subtotal</span><span>₹${Math.round(sub).toLocaleString('en-IN')}</span></div>
+        ${disc ? `<div style="display:flex;justify-content:space-between;font-size:13px;padding:4px 0;border-bottom:1px solid #e8d8b0"><span style="color:#666">Discount</span><span style="color:#c0392b">−₹${Math.round(disc).toLocaleString('en-IN')}</span></div>` : ''}
+        <div style="display:flex;justify-content:space-between;font-size:13px;padding:4px 0;border-bottom:1px solid #e8d8b0"><span style="color:#666">GST</span><span>${q.gst ? '₹'+Math.round(gstAmt).toLocaleString('en-IN')+' ('+q.gst+'%)' : 'As applicable'}</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:15px;font-weight:700;color:#b8860b;padding:8px 0 4px"><span>Total Payable</span><span>₹${Math.round(total).toLocaleString('en-IN')}</span></div>
+      </div>
+    </div>
+    <div style="font-size:12px;color:#888;font-style:italic;margin-bottom:20px">
+      Amount in Words: <em>${amtInWords(Math.round(total))}</em>
+    </div>
+
+    <div style="height:1px;background:#e8d8b0;margin:16px 0"></div>
+
+    <!-- PAYMENT SCHEDULE -->
+    <div style="font-size:10px;font-weight:700;color:#b8860b;letter-spacing:2px;text-transform:uppercase;margin-bottom:10px">Payment Schedule</div>
+    <div style="display:flex;border:1.5px solid #b8860b;border-radius:6px;overflow:hidden;margin-bottom:20px">
+      <div style="flex:1;padding:16px;text-align:center;background:#fdf8f0;border-right:1px solid #b8860b">
+        <div style="font-size:10px;font-weight:700;color:#b8860b;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px">Advance — Before Start</div>
+        <div style="font-size:24px;font-weight:800;color:#1a1a1a">${adv}%</div>
+        <div style="font-size:13px;font-weight:700;color:#b8860b;margin-top:3px">₹${Math.round(advAmt).toLocaleString('en-IN')}</div>
+      </div>
+      <div style="flex:1;padding:16px;text-align:center;background:#fff;border-right:1px solid #b8860b">
+        <div style="font-size:10px;font-weight:700;color:#b8860b;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px">Balance — ${bal===0?'N/A':'Mid-Package'}</div>
+        <div style="font-size:24px;font-weight:800;color:#1a1a1a">${bal}%</div>
+        <div style="font-size:13px;font-weight:700;color:#b8860b;margin-top:3px">₹${Math.round(balAmt).toLocaleString('en-IN')}</div>
+      </div>
+      <div style="flex:1;padding:16px;text-align:center;background:#fdf8f0">
+        <div style="font-size:10px;font-weight:700;color:#b8860b;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px">Total Value</div>
+        <div style="font-size:24px;font-weight:800;color:#1a1a1a">100%</div>
+        <div style="font-size:13px;font-weight:700;color:#b8860b;margin-top:3px">₹${Math.round(total).toLocaleString('en-IN')}</div>
+      </div>
+    </div>
+
+    <!-- TERMS & CONDITIONS -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px">
+      <div style="border:1.5px solid #b8860b;border-radius:6px;padding:16px;background:#fdf8f0">
+        <div style="font-size:10px;font-weight:700;color:#b8860b;letter-spacing:2px;text-transform:uppercase;margin-bottom:10px">Payment Terms</div>
+        <ul style="list-style:none;font-size:12px;color:#444;line-height:1.7">
+          <li style="padding:3px 0 3px 14px;position:relative;border-bottom:1px solid #f0e8d8"><span style="position:absolute;left:0;color:#b8860b">•</span><strong>${adv}% advance</strong> (₹${Math.round(advAmt).toLocaleString('en-IN')}) before package begins</li>
+          ${bal>0?`<li style="padding:3px 0 3px 14px;position:relative;border-bottom:1px solid #f0e8d8"><span style="position:absolute;left:0;color:#b8860b">•</span>Remaining <strong>${bal}%</strong> (₹${Math.round(balAmt).toLocaleString('en-IN')}) at mid-package</li>`:''}
+          <li style="padding:3px 0 3px 14px;position:relative;border-bottom:1px solid #f0e8d8"><span style="position:absolute;left:0;color:#b8860b">•</span>Payment via UPI / Bank Transfer</li>
+          <li style="padding:3px 0 3px 14px;position:relative"><span style="position:absolute;left:0;color:#b8860b">•</span>Receipt issued upon each payment</li>
+        </ul>
+      </div>
+      <div style="border:1.5px solid #b8860b;border-radius:6px;padding:16px">
+        <div style="font-size:10px;font-weight:700;color:#b8860b;letter-spacing:2px;text-transform:uppercase;margin-bottom:10px">Terms &amp; Conditions</div>
+        <ul style="list-style:none;font-size:12px;color:#444;line-height:1.7">
+          <li style="padding:3px 0 3px 14px;position:relative;border-bottom:1px solid #f0e8d8"><span style="position:absolute;left:0;color:#b8860b">•</span>Quotation valid for 30 days from issue date</li>
+          <li style="padding:3px 0 3px 14px;position:relative;border-bottom:1px solid #f0e8d8"><span style="position:absolute;left:0;color:#b8860b">•</span>Extra services charged at mutually agreed rates</li>
+          <li style="padding:3px 0 3px 14px;position:relative;border-bottom:1px solid #f0e8d8"><span style="position:absolute;left:0;color:#b8860b">•</span>Early exit: minimum 75% (₹${Math.round(exitMin).toLocaleString('en-IN')}) before termination</li>
+          <li style="padding:3px 0 3px 14px;position:relative;border-bottom:1px solid #f0e8d8"><span style="position:absolute;left:0;color:#b8860b">•</span>Client to provide access &amp; approvals on time</li>
+          <li style="padding:3px 0 3px 14px;position:relative"><span style="position:absolute;left:0;color:#b8860b">•</span>Package renews monthly unless terminated</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- CLIENT NOTES -->
+    ${q.notes ? `
+    <div style="border-left:4px solid #b8860b;padding:12px 16px;background:#fdf8f0;margin-bottom:18px;border-radius:0 6px 6px 0">
+      <div style="font-size:10px;font-weight:700;color:#b8860b;letter-spacing:2px;text-transform:uppercase;margin-bottom:6px">Special Notes</div>
+      <p style="font-size:12px;color:#555;line-height:1.7">${esc(q.notes)}</p>
+    </div>` : ''}
+
+    <!-- EARLY EXIT -->
+    <div style="border:1.5px solid #b8860b;border-left:5px solid #c0392b;border-radius:6px;background:#fff8f8;padding:14px 16px;margin-bottom:24px">
+      <div style="font-size:10px;font-weight:700;color:#c0392b;letter-spacing:2px;text-transform:uppercase;margin-bottom:6px">Early Exit Policy</div>
+      <p style="font-size:12px;color:#444;line-height:1.7">If the client discontinues the package before completion, a minimum of <strong>75% of total package value (₹${Math.round(exitMin).toLocaleString('en-IN')})</strong> must be paid before the agreement is terminated. Outstanding balance is due immediately upon exit.</p>
+    </div>
+
+    <!-- SIGNATURES -->
+    <div style="height:1px;background:#e8d8b0;margin:16px 0"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:40px;margin-top:10px">
+      <div>
+        <div style="font-size:10px;color:#aaa;letter-spacing:2px;text-transform:uppercase;margin-bottom:40px">Authorised Signatory — Service Provider</div>
+        <div style="border-bottom:1.5px solid #1a1a1a;margin-bottom:8px"></div>
+        <div style="font-weight:700;font-size:14px">JAC MediaLand</div>
+        <div style="font-size:12px;color:#888">Digital Marketing &amp; Creative Agency</div>
+      </div>
+      <div>
+        <div style="font-size:10px;color:#aaa;letter-spacing:2px;text-transform:uppercase;margin-bottom:40px">Client Acceptance &amp; Signature</div>
+        <div style="border-bottom:1.5px solid #1a1a1a;margin-bottom:8px"></div>
+        <div style="font-weight:700;font-size:14px">${esc(q.client.name)}</div>
+        <div style="font-size:12px;color:#888">${esc(q.client.location||'')}${q.client.person?' — '+esc(q.client.person):''}</div>
+      </div>
+    </div>
+    <div style="height:1px;background:#e8d8b0;margin:16px 0 10px"></div>
+    <div style="text-align:center;font-size:11px;color:#bbb;font-style:italic">
+      Thank you for choosing JAC MediaLand — Growing brands digitally.
+      &nbsp;|&nbsp; Quotation #${esc(q.id)} &nbsp;|&nbsp; Confidential &nbsp;|&nbsp; ${q.date}
+    </div>`;
+}
+
+function printDoc() {
+  const content = document.getElementById('print-area').innerHTML;
+  const w = window.open('', '_blank');
+  if (!w) { toast('Pop-up blocked. Please allow pop-ups and try again.', 'error'); return; }
+  w.document.write(`<!DOCTYPE html><html><head><title>Quotation — JAC MediaLand</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    @page { margin: 0.8cm 1cm; size: A4; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'DM Sans', 'Segoe UI', Arial, sans-serif; background: #fff; color: #1a1a1a; padding: 36px 44px; font-size: 13px; line-height: 1.6; }
+  </style>
+  </head><body>${content}</body></html>`);
+  w.document.close();
+  setTimeout(() => { w.focus(); w.print(); }, 500);
+}
+
+/* ══════════════════════════════════════════════
+   EXPORT / IMPORT
+══════════════════════════════════════════════ */
+function exportAll() {
+  const data = {
+    exported: new Date().toISOString(),
+    version: 2,
+    count: quotations.length,
+    quotations
+  };
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `jac_quotations_${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+  toast(`Exported ${quotations.length} quotations`, 'success');
+}
+
+function downloadJSON() {
+  if (!previewingId) return;
+  const q = quotations.find(x => x.id === previewingId);
+  if (!q) return;
+  const blob = new Blob([JSON.stringify(q, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `${q.id}.json`;
+  a.click();
+}
+
+function openImportModal() {
+  document.getElementById('file-input').value = '';
+  openModal('import-modal');
+}
+
+function onDragOver(e) { e.preventDefault(); document.getElementById('drop-zone').classList.add('dragover'); }
+function onDragLeave(e) { document.getElementById('drop-zone').classList.remove('dragover'); }
+function onDrop(e) {
+  e.preventDefault();
+  document.getElementById('drop-zone').classList.remove('dragover');
+  const file = e.dataTransfer.files[0];
+  if (file) processImportFile(file);
+}
+function handleFileSelect(e) {
+  const file = e.target.files[0];
+  if (file) processImportFile(file);
+}
+
+function processImportFile(file) {
+  if (!file.name.endsWith('.json')) { toast('Please select a .json file', 'error'); return; }
+  const reader = new FileReader();
+  reader.onload = async (e) => {
+    try {
+      let data = JSON.parse(e.target.result);
+      // Handle both array format and wrapped format
+      const incoming = Array.isArray(data) ? data : (data.quotations || []);
+      if (!incoming.length) { toast('No quotations found in file', 'error'); return; }
+      let added = 0, updated = 0;
+      incoming.forEach(q => {
+        const idx = quotations.findIndex(x => x.id === q.id);
+        if (idx >= 0) { quotations[idx] = q; updated++; }
+        else { quotations.unshift(q); added++; }
+      });
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(quotations)); } catch(e) {}
+      if (API_URL && API_KEY_VAL) await syncToCloud();
+      refreshAll();
+      closeModal('import-modal');
+      toast(`Imported: ${added} new, ${updated} updated`, 'success');
+    } catch(err) {
+      toast('Invalid JSON file', 'error');
+    }
+  };
+  reader.readAsText(file);
+}
+
+/* ══════════════════════════════════════════════
+   MODAL HELPERS
+══════════════════════════════════════════════ */
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+// Close modal on backdrop click
+document.querySelectorAll('.modal-backdrop').forEach(backdrop => {
+  backdrop.addEventListener('click', function(e) {
+    if (e.target === this) this.classList.remove('open');
+  });
+});
+
+// Escape key to close modals
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    document.querySelectorAll('.modal-backdrop.open').forEach(m => m.classList.remove('open'));
+  }
+});
+
+/* ══════════════════════════════════════════════
+   TOAST
+══════════════════════════════════════════════ */
+function toast(msg, type = 'info') {
+  const icons = { success: '✓', error: '✕', info: '●' };
+  const el = document.createElement('div');
+  el.className = `toast ${type}`;
+  el.innerHTML = `<span style="font-size:16px;opacity:.8">${icons[type]||'●'}</span> ${msg}`;
+  document.getElementById('toast-container').appendChild(el);
+  setTimeout(() => {
+    el.style.animation = 'toastOut .25s ease forwards';
+    setTimeout(() => el.remove(), 260);
+  }, 3000);
+}
+
+/* ══════════════════════════════════════════════
+   KEYBOARD SHORTCUTS
+══════════════════════════════════════════════ */
+document.addEventListener('keydown', e => {
+  if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+    e.preventDefault();
+    const pg = getCurrentPage();
+    if (pg === 'editor') { saveQuotation(null); }
+  }
+  if ((e.ctrlKey || e.metaKey) && e.key === 'p') {
+    e.preventDefault();
+    if (getCurrentPage() === 'preview') printDoc();
+    else if (getCurrentPage() === 'editor') saveAndPreview();
+  }
+  if ((e.ctrlKey || e.metaKey) && e.key === 'n') {
+    e.preventDefault();
+    openNewEditor();
+  }
+});
+
+/* ══════════════════════════════════════════════
+   INIT
+══════════════════════════════════════════════ */
+load();
+</script>
+</body>
+</html>
